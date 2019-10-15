@@ -8,7 +8,7 @@
  * Date: 2019-10-15 18:02:58
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-15 19:17:56
+ * LastEditTime: 2019-10-15 19:19:23
  * Description: README
  -->
 # Preproccess
@@ -37,6 +37,6 @@
 编译完成之后会生成 ```prep``` 可执行文件，首先在可执行文件所在的目录新建一个 `Output` 
 文件夹，否则会运行出错。然后执行
     
-    ```mpiexec -np N ./prep *.hepmc```
+```mpiexec -np N ./prep *.hepmc```
 
 这里 `N` 为 `MPI` 运行参数，`*.hepmc` 为待处理 `HepMC` 文件。
