@@ -21,6 +21,7 @@ endif()
 find_package(MPI REQUIRED)
 # add this line only when you are using openmpi which has a different c++ bindings
 add_definitions(-DOMPI_SKIP_MPICXX)
+include_directories(SYSTEM ${MPI_INCLUDE_PATH})
 
 # 添加头文件目录
 include_directories("include")
