@@ -11,7 +11,7 @@ E-Mail: kangjinwen@vip.qq.com
 Date: 2019-10-17 14:28:11
 
 LastEditors: KANG Jin-Wen
-LastEditTime: 2019-10-17 15:19:26
+LastEditTime: 2019-10-17 15:31:28
 Description: This python script is used to detect if the hepmc file is complete.
 '''
 import sys
@@ -33,6 +33,6 @@ if __name__ == "__main__":
     else:
         for i in range(1, len(sys.argv)):
             if not isComplete(sys.argv[i]):
-                print("--ERROR: file ", sys.argv[i], " is not complete!")
+                print("--\033[1;31m ERROR:\033[0m file " + str(sys.argv[i]) + " is not complete!")
             else:
-                print("file ", sys.argv[i], " is complete!")
+                print("\033[0;32m Info:\033[0m file " + str(sys.argv[i]) + " is complete!")
