@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-17 13:54:19
+ * LastEditTime: 2019-10-17 21:23:40
  * Description: Calculate distribution.
  */
 
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
 
     // 定义 phi histo
     vector<double> mPhiHistoPointList = 
-        {0, 0.31, 0.94, 1.25, 1.72, 2.20, 2.51, 2.82, 2.98, PI};
+        {0, 0.62, 1.26, 1.74, 2.26, 2.54, 2.86, 2.94, PI};
     Histo mPhiHisto(mPhiHistoPointList);
     
     for (size_t i = 0; i < file_name_vec.size(); i++) {
