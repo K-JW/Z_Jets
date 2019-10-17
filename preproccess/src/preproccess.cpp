@@ -8,7 +8,7 @@
  * Date: 2019-10-15 17:06:05
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-15 18:02:27
+ * LastEditTime: 2019-10-17 15:52:43
  * Description: Preproccess HepMC2 file.
  */
 
@@ -169,7 +169,22 @@ int main(int argc, char *argv[]) {
             ascii_in >> evt;
         }
     }
+
+    std::cout << "Tasks at rank " << rank << " is finished!" << std::endl;
     
+    MPI_Barrier(MPI_COMM_WORLD);
+    
+    delete []send_count;
+    delete []global_file_index;
+    delete []locale_file_index;
+    delete []offset_array;
+
+    MPI_Finalize();
+
+    std::cout << "All Tasks are finished!" << std::endl;
+
+    return 0;
+
 }
 
 string iHepTools::get_file_name(string filepath) {
