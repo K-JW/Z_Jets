@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-16 16:38:56
+ * LastEditTime: 2019-10-17 13:47:57
  * Description: Calculate distribution.
  */
 
@@ -16,6 +16,8 @@
 #include <vector>
 #include <cmath>
 #include <iostream>
+#include <fstream>
+#include <iomanip>
 
 #include <HepMC/IO_GenEvent.h>
 #include <HepMC/GenEvent.h>
@@ -27,6 +29,7 @@
 
 #include "jetSelector.h"
 #include "histo.h"
+#include "zboson.h"
 
 using namespace std;
 using namespace iHepTools;
@@ -38,6 +41,10 @@ inline bool isFinal( const HepMC::GenParticle* p ) {
 
 constexpr double PI = acos(-1);
 constexpr double R_jet = 0.3;
+
+// Jet definition
+JetDefinition jet_def(antikt_algorithm, R_jet);
+Selector select_akt = SelectorAbsEtaMax(1.6) && SelectorPtMin(30.);
 
 int main(int argc, char *argv[]) {
     
@@ -68,7 +75,7 @@ int main(int argc, char *argv[]) {
 
     // 定义 phi histo
     vector<double> mPhiHistoPointList = 
-        {0, 0.31, 0.94, 1.25, 1.72, 2.20, 2.51, 2.82, 2.98, 3.14};
+        {0, 0.31, 0.94, 1.25, 1.72, 2.20, 2.51, 2.82, 2.98, PI};
     Histo mPhiHisto(mPhiHistoPointList);
     
     for (size_t i = 0; i < file_name_vec.size(); i++) {
@@ -79,27 +86,53 @@ int main(int argc, char *argv[]) {
         while ( evt ) {
             
             vector<fastjet::PseudoJet> pseduo_jets;
-            size_t index = 0;   //  每个事件的第一、二个粒子时 Z 的 daughter
-            vector<fastjet::PseudoJet> Z_daughter;
+            vector<fastjet::PseudoJet> Z_daughters;
             fastjet::PseudoJet ZBoson;
 
             for (HepMC::GenEvent::particle_iterator p = evt->particles_begin(); 
                 p != evt->particles_end(); ++p) {
                 //
-                if (isFinal(*p) && (abs((*p)->pdg_id()) == 11 || abs((*p)->pdg_id()) == 13 )) {
-                    fastjet::PseudoJet tmp((*p)->momentum().px(),(*p)->momentum().py(), 
-                        (*p)->momentum().pz(), (*p)->momentum().e());
-                    tmp.set_user_index((*p)->pdg_id());
-                    Z_daughter.emplace_back(tmp);
-                    
+                if (isFinal(*p)) {
+                    if ((abs((*p)->pdg_id()) == 11 || abs((*p)->pdg_id()) == 13 )) {
+                        fastjet::PseudoJet tmp((*p)->momentum().px(),(*p)->momentum().py(), 
+                            (*p)->momentum().pz(), (*p)->momentum().e());
+                        tmp.set_user_index((*p)->pdg_id());
+                        Z_daughters.emplace_back(tmp);
+                    } else {
+                        fastjet::PseudoJet tmp((*p)->momentum().px(),(*p)->momentum().py(), 
+                            (*p)->momentum().pz(), (*p)->momentum().e());
+                        pseduo_jets.emplace_back(tmp);
+                    }
                 }
             }
 
-            std::cout << "ZBoson: " << ZBoson.E() << std::endl;
+            if (isZBoson(Z_daughters, ZBoson)) {
+                mPhiHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
+                vector<PseudoJet> jets = SelectJet(pseduo_jets, jet_def, select_akt);
+                if (jets.size() > 0) {
+                    for (const auto jet : jets) {
+                        double delta_phi = fabs(jet.phi() - ZBoson.phi());
+                        delta_phi = delta_phi > PI ? 2 * PI - delta_phi : delta_phi;
+                        mPhiHisto.addEventNum(delta_phi, (evt->weights())[0] / (evt->weights())[2]);
+                    }
+                }
+            }
 
             delete evt;
             ascii_in >> evt;
             
         }
+    }
+
+    vector<distInfo> mPhiHistoInfo = mPhiHisto.getHisto();
+    ofstream mDeltaPhiFile;
+    mDeltaPhiFile.open(args.get<string>("name"));
+    mDeltaPhiFile << "# xlow\txhigh\txmiddle\tval" << '\n';
+    for (size_t i = 0; i < mPhiHistoInfo.size(); i++) {
+        mDeltaPhiFile << setw(12) << scientific << setprecision(6)
+            << mPhiHistoInfo[i].region.leftValue << '\t' 
+            << mPhiHistoInfo[i].region.rightValue << '\t'
+            << mPhiHistoInfo[i].region.middleValue << '\t'
+            << mPhiHistoInfo[i].distValue << '\n';
     }
 }

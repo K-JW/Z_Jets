@@ -8,21 +8,78 @@
  * Date: 2019-10-16 14:42:56
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-16 15:41:53
+ * LastEditTime: 2019-10-17 12:17:56
  * Description: file content
  */
 
 #ifndef IHEPTOOLS_ZBOSON_H
 #define IHEPTOOLS_ZBOSON_H
 
-#include <HepMC/IO_GenEvent.h>
-#include <HepMC/GenEvent.h>
+
+#include <vector>
+
+#include <fastjet/PseudoJet.hh>
+// #include <HepMC/IO_GenEvent.h>
+// #include <HepMC/GenEvent.h>
+
+using namespace std;
+using namespace fastjet;
 
 namespace iHepTools {
     //
-    // returns true if the GenParticle does not decay
-    inline bool isFinal( const HepMC::GenParticle* p ) {
-        return !p->end_vertex() && p->status()==1;
+    // return bool type and rebuild Z boson
+    bool isZBoson(const vector<PseudoJet> &mZ_daughters, PseudoJet &ZBoson) {
+        if (mZ_daughters.size() != 2) {
+            ZBoson.reset(0., 0., 0., 0.);
+            return false;
+        } else if (abs(mZ_daughters[0].user_index()) == 11 && 
+                abs(mZ_daughters[1].user_index()) == 11 ) {
+                //
+                if (    (fabs(mZ_daughters[0].eta()) < 1.44 || (
+                        fabs(mZ_daughters[0].eta()) > 1.57 &&
+                        fabs(mZ_daughters[0].eta()) < 2.5)  // daughter0
+                        ) && (
+                            fabs(mZ_daughters[1].eta()) < 1.44 || (
+                                fabs(mZ_daughters[1].eta()) > 1.57 &&
+                                fabs(mZ_daughters[1].eta()) < 2.5
+                            )   // daughter1
+                        )
+                    ) {
+                    ZBoson = mZ_daughters[0] + mZ_daughters[1];
+                    if (mZ_daughters[0].pt() > 20.0 && mZ_daughters[1].pt() > 20.0 && 
+                        ZBoson.m() > 70.0 && ZBoson.m() < 110 && ZBoson.pt() > 60 && 
+                        fabs(ZBoson.rap()) < 2.5) {
+                        return true;
+                    } else {
+                        ZBoson.reset(0., 0., 0., 0.);
+                        return false;
+                    }
+                } else {
+                    ZBoson.reset(0., 0., 0., 0);
+                    return false;
+                }
+        } else if (abs(mZ_daughters[0].user_index()) == 13 && 
+                    abs(mZ_daughters[1].user_index()) == 13 ) {
+            //
+            if (fabs(mZ_daughters[0].eta()) < 2.4 && fabs(mZ_daughters[1].eta()) < 2.4 && 
+                mZ_daughters[0].pt() > 10.0 && mZ_daughters[1].pt() > 10.0) {
+                //
+                ZBoson = mZ_daughters[0] + mZ_daughters[1];
+                if (ZBoson.m() > 70 && ZBoson.m() < 110 && ZBoson.pt() > 60 && 
+                    fabs(ZBoson.rap()) < 2.5) {
+                    return true;
+                } else {
+                    ZBoson.reset(0., 0., 0., 0.);
+                    return false;
+                }
+            } else {
+                ZBoson.reset(0., 0., 0., 0.);
+                return false;
+            }
+        } else {
+            ZBoson.reset(0., 0., 0., 0.);
+            return false;
+        }
     }
 }
 
