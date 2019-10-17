@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-17 13:47:57
+ * LastEditTime: 2019-10-17 13:54:19
  * Description: Calculate distribution.
  */
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     args.add<string>("name", 'n', "assigned output file name", true, "out1.dat");
     args.add("help", 'h', "print help message");
     args.footer("filename ...");
-    args.set_program_name("calc");
+    args.set_program_name("dist");
 
     bool isGetArgs = args.parse(argc, argv);
     
