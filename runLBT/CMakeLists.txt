@@ -38,5 +38,8 @@ include_directories("include")
 # 添加编译选项
 add_compile_options("-O3")
 
+# Set compiler flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfpmath=sse")
+
 add_executable(runLBT src/runLBT.cpp)
 target_link_libraries(runLBT PRIVATE ${MPI_C_LIBRARIES} HepMC LBT)
