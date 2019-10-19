@@ -8,7 +8,7 @@
  * Date: 2019-10-18 09:09:56
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-18 13:47:31
+ * LastEditTime: 2019-10-19 21:59:14
  * Description: run LBT model
  */
 
@@ -122,16 +122,6 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
     
-    double mRandomXY = mLBT->MyRandom();
-    double R1 = 0., XXX, YYY;
-    for (int i = 0; i < XNucleon.size(); i++) {
-        R1 += mJetNum[i] / mJetNumTotal;
-        if (mRandomXY < R1) {
-            XXX = XNucleon[i];
-            YYY = YNucleon[i];
-            break;
-        }
-    }
 
     for (size_t i = 0; i < send_count[rank]; i++) {
         
@@ -157,6 +147,16 @@ int main(int argc, char *argv[]) {
 
             vector<Particle> mPartons;
             vector<Particle> mRetainPartons;
+            double mRandomXY = mLBT->MyRandom();
+            double R1 = 0., XXX, YYY;
+            for (int i = 0; i < XNucleon.size(); i++) {
+                R1 += mJetNum[i] / mJetNumTotal;
+                if (mRandomXY < R1) {
+                    XXX = XNucleon[i];
+                    YYY = YNucleon[i];
+                    break;
+                }
+            }
 
             for (HepMC::GenEvent::particle_iterator p = evt->particles_begin(); 
                     p != evt->particles_end(); ++p) {
