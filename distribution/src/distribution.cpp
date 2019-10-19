@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-19 10:21:35
+ * LastEditTime: 2019-10-19 17:38:40
  * Description: Calculate distribution.
  */
 
@@ -122,10 +122,22 @@ int main(int argc, char *argv[]) {
                     for (const auto jet : jets) {
                         double delta_phi = fabs(jet.phi() - ZBoson.phi());
                         delta_phi = delta_phi > PI ? 2 * PI - delta_phi : delta_phi;
-                        mPhiHisto.addEventNum(delta_phi, (evt->weights())[0] / (evt->weights())[2]);
-                        if ( delta_phi > (7 * PI / 8.0) ) {
-                            mXjZHisto.addEventNum(jet.pt() / ZBoson.pt(), 
+                        // calc deltaR
+                        double deltaPhi0J = fabs(Z_daughters[0].phi() - jet.phi());
+                        deltaPhi0J = deltaPhi0J > PI ? 2 * PI - deltaPhi0J : deltaPhi0J;
+                        double deltaPhi1J = fabs(Z_daughters[1].phi() - jet.phi());
+                        deltaPhi1J = deltaPhi1J > PI ? 2 * PI - deltaPhi1J : deltaPhi1J;
+                        double deltaRap0J = fabs(Z_daughters[0].rap() - jet.rap());
+                        double deltaRap1J = fabs(Z_daughters[1].rap() - jet.rap());
+                        double deltaR0J = sqrt(deltaPhi0J * deltaPhi0J + deltaRap0J * deltaRap0J);
+                        double deltaR1J = sqrt(deltaPhi1J * deltaPhi1J + deltaRap1J * deltaRap1J);
+                        if (deltaR0J >=0.4 && deltaR1J >= 0.4) {
+                            mPhiHisto.addEventNum(delta_phi, 
                                 (evt->weights())[0] / (evt->weights())[2]);
+                            if ( delta_phi > (7 * PI / 8.0) ) {
+                                mXjZHisto.addEventNum(jet.pt() / ZBoson.pt(), 
+                                    (evt->weights())[0] / (evt->weights())[2]);
+                            }
                         }
                     }
                 }
