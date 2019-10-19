@@ -1,0 +1,106 @@
+# BEGIN PLOT
+LegendOnly=/hepdata.77604.v1/t9/syserr Sherpa
+XLabel=$x_{jZ}=p_T^{jet}/p_T^Z$
+RatioPlotReference=/hepdata.77604.v1/t9/syserr
+YLabel=$\frac{1}{N_Z}\frac{{\rm d}N_{jZ}}{{\rm d}x_{jZ}}$
+XLabelSep=4.5
+YLabelSep=5
+DrawOnly=/hepdata.77604.v1/t9/syserr /hepdata.77604.v1/t9/staterr Sherpa comments
+RatioPlot=1
+#Title= CMS, 5.02 TeV \quad\quad\quad\quad\quad PbPb 404 $\mu\rm b^{-1}$, pp 27.4 $\rm pb^{-1}$
+Legend=1
+LegendXPos=0.06
+# LogY=1
+# YMin=1.0E-3
+# YMax=5
+# END PLOT
+
+# BEGIN HISTO1D /hepdata.77604.v1/t9/syserr
+ConnectBins=0
+ErrorBars=0
+ErrorBands=1
+IsRef=1
+Path=/hepdata.77604.v1/t9/syserr
+PolyMarker=*
+DotSize=0.12
+LineWidth=0
+LineStyle=none
+LineOpacity=1
+Title=CMS $p+p$
+# xlow	 xhigh	 val	 syserrminus	 syserrplus
+0.000000e-00	0.200000e+00	4.400000e-02	2.000000e-03	2.000000e-03
+0.200000e+00	0.400000e+00	2.400000e-01	1.000000e-02	1.000000e-02
+0.400000e+00	0.600000e+00	5.500000e-01	2.000000e-02	2.000000e-02
+0.600000e+00	0.800000e+00	7.400000e-01	2.000000e-02	2.000000e-02
+0.800000e+00	1.000000e+00	8.400000e-01	3.000000e-02	3.000000e-02
+1.000000e+00	1.200000e+00	4.600000e-01	3.000000e-02	3.000000e-02
+1.200000e+00	1.400000e+00	1.600000e-01	1.000000e-02	1.000000e-02
+1.400000e+00	1.600000e+00	2.900000e-02	2.000000e-03	2.000000e-03
+1.600000e+00	1.800000e+00	3.700000e-02	3.000000e-03	3.000000e-03
+1.800000e+00	2.000000e+00	2.900000e-02	2.000000e-03	2.000000e-03
+# END HISTO1D
+
+# BEGIN HISTO1D /hepdata.77604.v1/t9/staterr
+ConnectBins=0
+ErrorBars=1
+ErrorBands=0
+IsRef=1
+Path=/hepdata.77604.v1/t9/staterr
+PolyMarker=*
+DotSize=0.12
+#LineWidth=0
+#LineStyle=none
+LineOpacity=1
+# xlow	 xhigh	 val	 syserrminus	 syserrplus
+0.000000e-00	0.200000e+00	4.400000e-02	1.800000e-02	1.800000e-02
+0.200000e+00	0.400000e+00	2.400000e-01	4.000000e-02	4.000000e-02
+0.400000e+00	0.600000e+00	5.500000e-01	6.000000e-02	6.000000e-02
+0.600000e+00	0.800000e+00	7.400000e-01	7.000000e-02	7.000000e-02
+0.800000e+00	1.000000e+00	8.400000e-01	8.000000e-02	8.000000e-02
+1.000000e+00	1.200000e+00	4.600000e-01	6.000000e-02	6.000000e-02
+1.200000e+00	1.400000e+00	1.600000e-01	3.000000e-02	3.000000e-02
+1.400000e+00	1.600000e+00	2.900000e-02	1.500000e-02	1.500000e-02
+1.600000e+00	1.800000e+00	3.700000e-02	1.600000e-02	1.600000e-02
+1.800000e+00	2.000000e+00	2.900000e-02	1.500000e-02	1.500000e-02
+# END HISTO1D
+
+# BEGIN HISTO1D Sherpa
+ErrorBars=0
+LineColor=red
+LineStyle=solid
+Path=Sherpa
+Title=Sherpa
+XLabel=~
+YLabel=~
+# xlow	xhigh	val	errorminus errorplus
+0.000000e-00	0.200000e+00	1.265000e-02	0.000000e+00	0.000000e+00
+0.200000e+00	0.400000e+00	1.545120e-01	0.000000e+00	0.000000e+00
+0.400000e+00	0.600000e+00	4.953080e-01	0.000000e+00	0.000000e+00
+0.600000e+00	0.800000e+00	7.302473e-01	0.000000e+00	0.000000e+00
+0.800000e+00	1.000000e+00	1.150753e+00	0.000000e+00	0.000000e+00
+1.000000e+00	1.200000e+00	5.860407e-01	0.000000e+00	0.000000e+00
+1.200000e+00	1.400000e+00	1.115823e-01	0.000000e+00	0.000000e+00
+1.400000e+00	1.600000e+00	3.999856e-02	0.000000e+00	0.000000e+00
+1.600000e+00	1.800000e+00	2.024710e-02	0.000000e+00	0.000000e+00
+1.800000e+00	2.000000e+00	1.137240e-02	0.000000e+00	0.000000e+00
+# END HISTO1D
+
+# BEGIN SPECIAL comments
+\psclip{\psframe[linewidth=0, linestyle=none](0,0)(1,1)}
+\uput{4pt}[0]{0}(0.6, 0.88){$\sqrt{s}=5.02$~TeV~$Z^0+$jet}
+\uput{4pt}[0]{0}(0.6, 0.78){$p_T^Z>60$~GeV/c}
+\uput{4pt}[0]{0}(0.6, 0.68){anki-$k_T$ jet $R=0.3$}
+\uput{4pt}[0]{0}(0.6, 0.58){$p_T^{\rm jet}>30$~GeV/c}
+\uput{4pt}[0]{0}(0.6, 0.48){$\lvert\eta^{\rm jet}\rvert<1.6$}
+\endpsclip
+# END SPECIAL
+
+# # BEGIN POINT sp1
+# Title=MC Points
+# # xlow	 xhigh
+# 2.000000e+01	4.000000e+01
+# 4.000000e+01	6.000000e+01
+# 6.000000e+01	8.000000e+01
+# 8.000000e+01	1.000000e+02
+# 1.000000e+02	1.500000e+02
+# # END POINT
