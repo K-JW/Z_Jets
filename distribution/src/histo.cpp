@@ -8,7 +8,7 @@
  * Date: 2019-10-16 09:46:45
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-16 15:53:54
+ * LastEditTime: 2019-10-19 10:21:20
  * Description: Define histo class
  */
 
@@ -46,7 +46,7 @@ Histo::Histo(double xmin, double xmax, double binWidth) {
 }
 
 Histo::Histo(const vector<double> &pointList) {
-    const static int vec_size = pointList.size() - 1;
+    const int vec_size = pointList.size() - 1;
     mDistInfoVec.resize(vec_size);
     for (size_t i = 0; i < vec_size; i++) {
         mDistInfoVec[i].region.leftValue = pointList[i];
@@ -75,12 +75,14 @@ int Histo::findAtRegion(double value) {
         return mDistInfoVec.size() - 1;
     } else {
         std::cout << value << " don't belong to any region." << std::endl;
+        return -1;
     }
 }
 
 void Histo::addEventNum(const double &value, const double &weight) {
     int region_index = findAtRegion(value);
-    mDistInfoVec[region_index].distValue += weight;
+    if (region_index != -1)
+        mDistInfoVec[region_index].distValue += weight;
 }
 
 // iHepTools::Histo iHepTools::Histo::operator+(const iHepTools::Histo &mHisto) {
