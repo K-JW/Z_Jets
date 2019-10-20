@@ -8,7 +8,7 @@
  * Date: 2019-10-18 09:09:56
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-19 21:59:14
+ * LastEditTime: 2019-10-20 14:51:01
  * Description: run LBT model
  */
 
@@ -218,7 +218,7 @@ int main(int argc, char *argv[]) {
                 hep::WritePartonsToHepMC2(out, mEvent_ID, evt->alphaQCD(), 
                     evt->alphaQED(), evt->weights()[0], evt->weights()[1], 
                     evt->weights()[2], evt->weights()[3], evt->weights()[4], 
-                    mRetainPartons, mPartons);
+                    mRetainPartons, mFinalPartons);
             }
 
             mLBT->clear();
