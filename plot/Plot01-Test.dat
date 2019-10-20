@@ -1,18 +1,18 @@
 # BEGIN PLOT
-LegendOnly=/hepdata.77604.v1/t1/syserr Sherpa
+LegendOnly=/hepdata.77604.v1/t1/syserr Sherpa sp1
 XLabel=$\Delta\phi_{jZ}=\mid\phi_j - \phi_Z\mid$
 RatioPlotReference=/hepdata.77604.v1/t1/syserr
 YLabel=$\frac{1}{N_Z}\frac{{\rm d}N_{jZ}}{{\rm d}\Delta\phi_{jZ}}$
 XLabelSep=4.5
 YLabelSep=5
-DrawOnly=/hepdata.77604.v1/t1/syserr Sherpa /hepdata.77604.v1/t1/staterr comments
+DrawOnly=/hepdata.77604.v1/t1/syserr Sherpa /hepdata.77604.v1/t1/staterr comments sp1
 RatioPlot=1
 #Title= CMS, 5.02 TeV \quad\quad\quad\quad\quad PbPb 404 $\mu\rm b^{-1}$, pp 27.4 $\rm pb^{-1}$
 Legend=1
 LegendXPos=0.5
 LogY=1
-# YMin=1.0E-3
-# YMax=5
+YMin=1.0E-3
+YMax=5
 # END PLOT
 
 # BEGIN HISTO1D /hepdata.77604.v1/t1/syserr
@@ -92,12 +92,15 @@ YLabel=~
 \endpsclip
 # END SPECIAL
 
-# # BEGIN POINT sp1
-# Title=MC Points
-# # xlow	 xhigh
-# 2.000000e+01	4.000000e+01
-# 4.000000e+01	6.000000e+01
-# 6.000000e+01	8.000000e+01
-# 8.000000e+01	1.000000e+02
-# 1.000000e+02	1.500000e+02
-# # END POINT
+# BEGIN POINT sp1
+Title=MC Points
+# xlow	xhigh
+3.100000e-01	0.0326076
+9.400000e-01	0.0354613
+1.500000e+00	0.0489619
+2.000000e+00	0.0972679
+2.400000e+00	0.154641
+2.700000e+00	0.361766
+2.900000e+00	0.839468
+3.140000e+00	2.18133
+# END POINT
