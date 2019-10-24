@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-24 15:32:24
+ * LastEditTime: 2019-10-24 15:39:17
  * Description: Calculate distribution.
  */
 
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
         false, "delta_phi.dat");
     args.add<string>("x-jz", 'x', "assigned x_jZ output file name", 
         false, "x_jZ.dat");
-    args.add("enable-smeared", 's', "execute smearing for data");
+    args.add("enable-smeared", 's', "execute smearing for data (default: false)");
     args.add<double>("C-CSN", 'C', "given C's value of CSN", false, 0.061);
     args.add<double>("S-CSN", 'S', "given S's value of CSN", false, 0.95);
     args.add<double>("N-CSN", 'N', "given N's value of CSN", false, 0.001);
