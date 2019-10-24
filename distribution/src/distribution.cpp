@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-19 17:38:40
+ * LastEditTime: 2019-10-24 15:32:24
  * Description: Calculate distribution.
  */
 
@@ -18,6 +18,7 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
+#include <random>
 
 #include <HepMC/IO_GenEvent.h>
 #include <HepMC/GenEvent.h>
@@ -30,6 +31,7 @@
 #include "jetSelector.h"
 #include "histo.h"
 #include "zboson.h"
+#include "smeared.h"
 
 using namespace std;
 using namespace iHepTools;
@@ -39,12 +41,16 @@ inline bool isFinal( const HepMC::GenParticle* p ) {
     return !p->end_vertex() && p->status()==1;
 }
 
+// random number generator
+random_device mRD;
+default_random_engine mRNG(mRD());
+
 constexpr double PI = acos(-1);
 constexpr double R_jet = 0.3;
 
 // Jet definition
 JetDefinition jet_def(antikt_algorithm, R_jet);
-Selector select_akt = SelectorAbsEtaMax(1.6) && SelectorPtMin(30.);
+Selector select_akt = SelectorAbsEtaMax(1.6) && SelectorPtMin(20.); // 因为要做 smeared, 所以这里要取小一点
 
 int main(int argc, char *argv[]) {
     
@@ -54,6 +60,10 @@ int main(int argc, char *argv[]) {
         false, "delta_phi.dat");
     args.add<string>("x-jz", 'x', "assigned x_jZ output file name", 
         false, "x_jZ.dat");
+    args.add("enable-smeared", 's', "execute smearing for data");
+    args.add<double>("C-CSN", 'C', "given C's value of CSN", false, 0.061);
+    args.add<double>("S-CSN", 'S', "given S's value of CSN", false, 0.95);
+    args.add<double>("N-CSN", 'N', "given N's value of CSN", false, 0.001);
     args.add("help", 'h', "print help message");
     args.footer("filename ...");
     args.set_program_name("dist");
@@ -74,6 +84,10 @@ int main(int argc, char *argv[]) {
     for (size_t i = 0; i < args.rest().size(); i++) {
         file_name_vec.emplace_back(args.rest()[i]);
     }
+    bool isSmeared = args.exist("enable-smeared");
+    CSN mCSN = {
+        args.get<double>("C-CSN"), args.get<double>("S-CSN"), args.get<double>("N-CSN")
+    };
     // 
 
     // 定义 phi histo
@@ -119,7 +133,7 @@ int main(int argc, char *argv[]) {
                 mXjZHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
                 vector<PseudoJet> jets = SelectJet(pseduo_jets, jet_def, select_akt);
                 if (jets.size() > 0) {
-                    for (const auto jet : jets) {
+                    for (const auto &jet : jets) {
                         double delta_phi = fabs(jet.phi() - ZBoson.phi());
                         delta_phi = delta_phi > PI ? 2 * PI - delta_phi : delta_phi;
                         // calc deltaR
@@ -132,11 +146,18 @@ int main(int argc, char *argv[]) {
                         double deltaR0J = sqrt(deltaPhi0J * deltaPhi0J + deltaRap0J * deltaRap0J);
                         double deltaR1J = sqrt(deltaPhi1J * deltaPhi1J + deltaRap1J * deltaRap1J);
                         if (deltaR0J >=0.4 && deltaR1J >= 0.4) {
-                            mPhiHisto.addEventNum(delta_phi, 
-                                (evt->weights())[0] / (evt->weights())[2]);
-                            if ( delta_phi > (7 * PI / 8.0) ) {
-                                mXjZHisto.addEventNum(jet.pt() / ZBoson.pt(), 
+                            if (jet.pt() >= 30.0) {
+                                mPhiHisto.addEventNum(delta_phi, 
                                     (evt->weights())[0] / (evt->weights())[2]);
+                            }
+                            if ( delta_phi > (7 * PI / 8.0) ) {
+                                double jet_pt = isSmeared ? GaussSmeared(
+                                    mRNG, jet.pt(), Variance(jet.pt(), mCSN)
+                                ) : jet.pt();
+                                if (jet_pt > 30.0) {
+                                    mXjZHisto.addEventNum(jet_pt / ZBoson.pt(), 
+                                        (evt->weights())[0] / (evt->weights())[2]);
+                                }
                             }
                         }
                     }
@@ -152,6 +173,11 @@ int main(int argc, char *argv[]) {
     vector<distInfo> mPhiHistoInfo = mPhiHisto.getHisto();
     ofstream mDeltaPhiFile;
     mDeltaPhiFile.open(args.get<string>("delta-phi"));
+    if (isSmeared) {
+        mDeltaPhiFile << "# Smeared: True, and\n"
+            << "# C: " << mCSN.C << ", S: " << mCSN.S << ", N: "
+            << mCSN.N << '\n';
+    }
     mDeltaPhiFile << "# xlow\txhigh\txmiddle\tval" << '\n';
     for (size_t i = 0; i < mPhiHistoInfo.size(); i++) {
         mDeltaPhiFile << setw(12) << scientific << setprecision(6)
@@ -164,6 +190,11 @@ int main(int argc, char *argv[]) {
     vector<distInfo> mXjZHistoInfo = mXjZHisto.getHisto();
     ofstream mXjZFile;
     mXjZFile.open(args.get<string>("x-jz"));
+    if (isSmeared) {
+        mXjZFile << "# # Smeared: True, and\n"
+            << "# C: " << mCSN.C << ", S: " << mCSN.S << ", N: "
+            << mCSN.N << '\n';
+    }
     mXjZFile << "# xlow\txhigh\txmiddle\tval" << '\n';
     for (size_t i = 0; i < mXjZHistoInfo.size(); i++) {
         mXjZFile << setw(12) << scientific << setprecision(6)
