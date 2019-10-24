@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-24 15:39:17
+ * LastEditTime: 2019-10-24 20:52:58
  * Description: Calculate distribution.
  */
 
@@ -152,7 +152,7 @@ int main(int argc, char *argv[]) {
                             }
                             if ( delta_phi > (7 * PI / 8.0) ) {
                                 double jet_pt = isSmeared ? GaussSmeared(
-                                    mRNG, jet.pt(), Variance(jet.pt(), mCSN)
+                                    mRNG, jet.pt(), StandardDeviation(jet.pt(), mCSN)
                                 ) : jet.pt();
                                 if (jet_pt > 30.0) {
                                     mXjZHisto.addEventNum(jet_pt / ZBoson.pt(), 

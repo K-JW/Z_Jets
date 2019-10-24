@@ -8,7 +8,7 @@
  * Date: 2019-10-23 17:49:05
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-24 14:20:17
+ * LastEditTime: 2019-10-24 20:52:36
  * Description: smearing
  */
 
@@ -24,7 +24,7 @@ namespace iHepTools {
         double N;
     };
 
-    inline double Variance(double primitive_value, CSN mCSN) {
+    inline double StandardDeviation(double primitive_value, CSN mCSN) {
         return sqrt(
             pow(mCSN.C, 2) + (
                 pow(mCSN.S, 2) / primitive_value
@@ -36,7 +36,7 @@ namespace iHepTools {
     
     // 传入一个随机数生成引擎作为第一个参数
     template<class RNG>
-    double GaussSmeared(RNG &gen, const double &primitive_value, const double &variance) {
+    double GaussSmeared(RNG &gen, const double &primitive_value, const double &standard_deviation) {
         static_assert(
             std::is_same<RNG, std::default_random_engine>::value || 
             std::is_same<RNG, std::minstd_rand0>::value || 
@@ -51,7 +51,7 @@ namespace iHepTools {
             "RNG is not a supported random engine!"
         );
         double gauss_smeared_value;
-        std::normal_distribution<double> norm(1.0, variance);
+        std::normal_distribution<double> norm(1.0, standard_deviation);
         gauss_smeared_value = primitive_value * norm(gen);
         return gauss_smeared_value;
     }
