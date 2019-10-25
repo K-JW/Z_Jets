@@ -8,7 +8,7 @@
  * Date: 2019-10-18 09:09:56
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-20 14:51:01
+ * LastEditTime: 2019-10-25 11:18:43
  * Description: run LBT model
  */
 
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
     //
     for (size_t i = 0; i < file_num; i++)
         global_file_index[i] = i;
-    for (size_t i = 0; i <size; i++)
+    for (size_t i = 0; i < size; i++)
         send_count[i] = data_size_general;
     for (size_t i = 0; i < data_size_last; i++)
         send_count[i % size] += 1;
