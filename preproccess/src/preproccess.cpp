@@ -8,12 +8,13 @@
  * Date: 2019-10-15 17:06:05
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-17 15:52:43
+ * LastEditTime: 2019-10-25 11:41:50
  * Description: Preproccess HepMC2 file.
  */
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include <mpi.h>
 
@@ -22,6 +23,7 @@
 
 #include "wHepMC2.h"
 #include "particle.h"
+#include "cmdline/cmdline.h"
 
 using namespace std;
 
@@ -36,10 +38,34 @@ namespace iHepTools {
 
 int main(int argc, char *argv[]) {
     
-    if (argc == 1) {
-        cout << "    " << "ERROR: Please supply HepMC file as arguments..." << endl;
+    // 参数解析
+    cmdline::parser args;
+    args.add<string>("out-dir", 'o', "assigned the path of output data", false, "./Output");
+    args.add<double>("Z-mass-Min", 'l', "assigned select Z's max mass", false, 60.0);
+    args.add("help", 'h', "print help message");
+    args.footer("filenames...");
+    args.set_program_name("prep");
+    bool isGetArgs = args.parse(argc, argv);
+    if (argc == 1 || args.exist("help")) {
+        cerr << args.usage();
+        cout << "\033[1;31mERROR:\033[0m Please supply HepMC files as argument...\n";
         exit(EXIT_FAILURE);
     }
+    if (!isGetArgs) {
+        cerr << args.error() << endl << args.usage();
+        cout << "\033[1;31mERROR:\033[0m Please supply HepMC files as argument...\n";
+        exit(EXIT_FAILURE);
+    }
+    vector<string> file_name_vec;
+    for (size_t i = 0; i < args.rest().size(); i++) {
+        file_name_vec.emplace_back(args.rest()[i]);
+    }
+    const int file_num = file_name_vec.size();
+    const double ZMassMin = args.get<double>("Z-mass-Min");
+    // if (argc == 1) {
+    //     cout << "    " << "ERROR: Please supply HepMC file as arguments..." << endl;
+    //     exit(EXIT_FAILURE);
+    // }
 
     // 初始化 MPI
     MPI_Init(&argc, &argv);
@@ -47,26 +73,26 @@ int main(int argc, char *argv[]) {
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    if ((argc - 1) < size) {
-        cout << "Assigned process number greater than files number, please check it!"
+    if (file_num < size) {
+        cerr << "--\033[1;31m ERROR:\033[0m Assigned process number greater than files number, please check it!"
             << endl;
         exit(EXIT_FAILURE);
     }
 
     // 获取一般 MPI 进程可以分配到的数据量
-    const int data_size_general = (argc - 1) / size;
+    const int data_size_general = file_num / size;
 
     // 获取最后一个 NPI 进程分配到的数据量
-    const int data_size_last = (argc - 1) % size;
+    const int data_size_last = file_num % size;
 
     // 申请动态数组使用的内存块 
     int* send_count = new int[size]();
-    int* global_file_index = new int[argc - 1]();
-    int* locale_file_index = new int[argc - 1]();
+    int* global_file_index = new int[file_num]();
+    int* locale_file_index = new int[file_num]();
     int* offset_array = new int[size]();
 
-    for (int i = 1; i < argc; i++) {
-        global_file_index[i - 1] = i;
+    for (int i = 0; i < file_num; i++) {
+        global_file_index[i] = i;
     }
 
     for (int i = 0; i < size; i++) {
@@ -89,14 +115,14 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < send_count[rank]; i++) {
         
         // 待处理文件名
-        const char *hepmc_in = argv[locale_file_index[i]];
+        string hepmc_in = file_name_vec[locale_file_index[i]];
 
         std::cout << "Rank: " << rank << ", File name: " 
             << hepmc_in << std::endl;
 
 
         // 输出文件名
-        std::string output = static_cast<std::string>("./Output/") + 
+        std::string output = args.get<string>("out-dir") + "/" +
             iHepTools::get_file_name(static_cast<std::string>(hepmc_in)) + 
             static_cast<std::string>("Rank-") + 
             std::to_string(rank) +
@@ -147,7 +173,7 @@ int main(int argc, char *argv[]) {
 
             if (mZ_daughter.size() == 2) {
                 if (sqrt(pow(mZ_daughter[0].x1 + mZ_daughter[1].x1, 2) + 
-                    pow(mZ_daughter[0].x2 + mZ_daughter[1].x2, 2)) > 60.0) {
+                    pow(mZ_daughter[0].x2 + mZ_daughter[1].x2, 2)) > ZMassMin) {
                     //
                     fact_event_number++;
                     isGoodEvent = true;
