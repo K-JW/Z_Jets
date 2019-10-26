@@ -8,7 +8,7 @@
  * Date: 2019-10-16 14:42:56
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-17 12:17:56
+ * LastEditTime: 2019-10-26 19:42:28
  * Description: file content
  */
 
@@ -28,7 +28,7 @@ using namespace fastjet;
 namespace iHepTools {
     //
     // return bool type and rebuild Z boson
-    bool isZBoson(const vector<PseudoJet> &mZ_daughters, PseudoJet &ZBoson) {
+    bool isGoodZBoson(const vector<PseudoJet> &mZ_daughters, PseudoJet &ZBoson, const double &ZBosonPtMin = 60.0) {
         if (mZ_daughters.size() != 2) {
             ZBoson.reset(0., 0., 0., 0.);
             return false;
@@ -47,7 +47,7 @@ namespace iHepTools {
                     ) {
                     ZBoson = mZ_daughters[0] + mZ_daughters[1];
                     if (mZ_daughters[0].pt() > 20.0 && mZ_daughters[1].pt() > 20.0 && 
-                        ZBoson.m() > 70.0 && ZBoson.m() < 110 && ZBoson.pt() > 60 && 
+                        ZBoson.m() > 70.0 && ZBoson.m() < 110 && ZBoson.pt() > ZBosonPtMin && 
                         fabs(ZBoson.rap()) < 2.5) {
                         return true;
                     } else {
@@ -65,7 +65,7 @@ namespace iHepTools {
                 mZ_daughters[0].pt() > 10.0 && mZ_daughters[1].pt() > 10.0) {
                 //
                 ZBoson = mZ_daughters[0] + mZ_daughters[1];
-                if (ZBoson.m() > 70 && ZBoson.m() < 110 && ZBoson.pt() > 60 && 
+                if (ZBoson.m() > 70 && ZBoson.m() < 110 && ZBoson.pt() > ZBosonPtMin && 
                     fabs(ZBoson.rap()) < 2.5) {
                     return true;
                 } else {
@@ -76,6 +76,18 @@ namespace iHepTools {
                 ZBoson.reset(0., 0., 0., 0.);
                 return false;
             }
+        } else {
+            ZBoson.reset(0., 0., 0., 0.);
+            return false;
+        }
+    }
+
+    bool isGoodZBoson(const vector<PseudoJet> &mZ_daughters, PseudoJet &ZBoson, double &ZBosonPtMin, double &ZBosonPtMax) {
+        PseudoJet tmpZBoson;
+        bool tmpBool = isGoodZBoson(mZ_daughters, tmpZBoson, ZBosonPtMin);
+        if (tmpBool && tmpZBoson.pt() < ZBosonPtMax) {
+            ZBoson = tmpZBoson;
+            return true;
         } else {
             ZBoson.reset(0., 0., 0., 0.);
             return false;
