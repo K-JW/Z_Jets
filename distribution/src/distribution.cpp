@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-26 21:18:50
+ * LastEditTime: 2019-10-26 22:01:52
  * Description: Calculate distribution.
  */
 
@@ -32,6 +32,7 @@
 #include "histo.h"
 #include "zboson.h"
 #include "smeared.h"
+#include "output.h"
 
 using namespace std;
 using namespace iHepTools;
@@ -198,76 +199,25 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    string comments = "";
+    if (isSmeared) {
+        comments = "# Smeared: True, and\n# C: " + to_string(mCSN.C) 
+            + ", S: " + to_string(mCSN.S) + ", N: " 
+            + to_string(mCSN.N) + "\n";
+    }
+
+    // 输出 delta phi_jZ
     vector<distInfo> mPhiHistoInfo = mPhiHisto.getDHisto();
-    ofstream mDeltaPhiFile;
-    mDeltaPhiFile.open(args.get<string>("delta-phi"));
-    if (isSmeared) {
-        mDeltaPhiFile << "# Smeared: True, and\n"
-            << "# C: " << mCSN.C << ", S: " << mCSN.S << ", N: "
-            << mCSN.N << '\n';
-    }
-    mDeltaPhiFile << "# xlow\txhigh\txmiddle\tval" << '\n';
-    for (size_t i = 0; i < mPhiHistoInfo.size(); i++) {
-        mDeltaPhiFile << setw(12) << scientific << setprecision(6)
-            << mPhiHistoInfo[i].region.leftValue << '\t' 
-            << mPhiHistoInfo[i].region.rightValue << '\t'
-            << mPhiHistoInfo[i].region.middleValue << '\t'
-            << mPhiHistoInfo[i].distValue << '\n';
-    }
-    mDeltaPhiFile.close();
-
+    WriteDataToText(args.get<string>("delta-phi"), mPhiHistoInfo, comments);
+    // 输出 x_jZ
     vector<distInfo> mXjZHistoInfo = mXjZHisto.getDHisto();
-    ofstream mXjZFile;
-    mXjZFile.open(args.get<string>("x-jz"));
-    if (isSmeared) {
-        mXjZFile << "# # Smeared: True, and\n"
-            << "# C: " << mCSN.C << ", S: " << mCSN.S << ", N: "
-            << mCSN.N << '\n';
-    }
-    mXjZFile << "# xlow\txhigh\txmiddle\tval" << '\n';
-    for (size_t i = 0; i < mXjZHistoInfo.size(); i++) {
-        mXjZFile << setw(12) << scientific << setprecision(6)
-            << mXjZHistoInfo[i].region.leftValue << '\t' 
-            << mXjZHistoInfo[i].region.rightValue << '\t'
-            << mXjZHistoInfo[i].region.middleValue << '\t'
-            << mXjZHistoInfo[i].distValue << '\n';
-    }
-    mXjZFile.close();
-
+    WriteDataToText(args.get<string>("x-jz"), mXjZHistoInfo, comments);
+    // 输出 <x_jZ> 
     vector<distInfo> mMeanXjzHistoInfo = mMeanXjzHisto.getHisto();
-    ofstream mMeanXjZFile;
-    mMeanXjZFile.open(args.get<string>("mean-x-jz"));
-    if (isSmeared) {
-        mMeanXjZFile << "# # Smeared: True, and\n"
-            << "# C: " << mCSN.C << ", S: " << mCSN.S << ", N: "
-            << mCSN.N << '\n';
-    }
-    mMeanXjZFile << "# xlow\txhigh\txmiddle\tval" << '\n';
-    for (size_t i = 0; i < mMeanXjzHistoInfo.size(); i++) {
-        mMeanXjZFile << setw(12) << scientific << setprecision(6)
-            << mMeanXjzHistoInfo[i].region.leftValue << '\t' 
-            << mMeanXjzHistoInfo[i].region.rightValue << '\t'
-            << mMeanXjzHistoInfo[i].region.middleValue << '\t'
-            << mMeanXjzHistoInfo[i].distValue << '\n';
-    }
-    mMeanXjZFile.close();
-
+    WriteDataToText(args.get<string>("mean-x-jz"), mMeanXjzHistoInfo, comments);
+    // 输出 R_jZ
     vector<distInfo> mRjZHistoInfo = mRjZHisto.getHisto();
-    ofstream mRjZFile;
-    mRjZFile.open(args.get<string>("R_jZ"));
-    if (isSmeared) {
-        mRjZFile << "# # Smeared: True, and\n"
-            << "# C: " << mCSN.C << ", S: " << mCSN.S << ", N: "
-            << mCSN.N << '\n';
-    }
-    mRjZFile << "# xlow\txhigh\txmiddle\tval" << '\n';
-    for (size_t i = 0; i < mRjZHistoInfo.size(); i++) {
-        mRjZFile << setw(12) << scientific << setprecision(6)
-            << mRjZHistoInfo[i].region.leftValue << '\t' 
-            << mRjZHistoInfo[i].region.rightValue << '\t'
-            << mRjZHistoInfo[i].region.middleValue << '\t'
-            << mRjZHistoInfo[i].distValue << '\n';
-    }
-    mRjZFile.close();
+    WriteDataToText(args.get<string>("R_jZ"), mRjZHistoInfo, comments);
+    
     
 }
