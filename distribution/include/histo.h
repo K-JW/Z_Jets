@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:50:05
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-16 11:53:03
+ * LastEditTime: 2019-10-26 17:17:01
  * Description: Class histogram
  */
 
@@ -58,8 +58,15 @@ namespace iHepTools {
             // // 重载加法运算符
             // Histo operator+(const Histo &mHisto);
 
+            // 返回归一化因子
+            inline double getEventNorm() const {
+                return mNormalisationValue;
+            }
+            
             // 返回值列表
             vector<distInfo> getHisto();
+            // 返回取微分之后的值列表
+            vector<distInfo> getDHisto();
         
         private:
             vector<distInfo> mDistInfoVec;
