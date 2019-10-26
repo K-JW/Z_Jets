@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-24 20:52:58
+ * LastEditTime: 2019-10-26 21:18:50
  * Description: Calculate distribution.
  */
 
@@ -60,6 +60,10 @@ int main(int argc, char *argv[]) {
         false, "delta_phi.dat");
     args.add<string>("x-jz", 'x', "assigned x_jZ output file name", 
         false, "x_jZ.dat");
+    args.add<string>("mean-x-jz", 'm', "assigned <x_jZ> output file name", 
+        false, "mean-x_jZ.dat");
+    args.add<string>("R_jZ", 'r', "assigned R_jZ output file name", 
+        false, "R_jZ.dat");
     args.add("enable-smeared", 's', "execute smearing for data (default: false)");
     args.add<double>("C-CSN", 'C', "given C's value of CSN", false, 0.061);
     args.add<double>("S-CSN", 'S', "given S's value of CSN", false, 0.95);
@@ -99,6 +103,18 @@ int main(int argc, char *argv[]) {
     vector<double> mXjZHistoPointList = 
         {0, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0};
     Histo mXjZHisto(mXjZHistoPointList);
+
+    // 定义 <x_jZ> histo
+    vector<double> mMeanXjZHistoPointList = {
+        40.0, 50.0, 60.0, 80.0, 120.0
+    };
+    Histo mMeanXjzHisto(mMeanXjZHistoPointList);
+
+    // 定义 R_jZ histo
+    vector<double> mRjZHistoPointList = {
+        40.0, 50.0, 60.0, 80.0, 120.0
+    };
+    Histo mRjZHisto(mRjZHistoPointList);
     
     for (size_t i = 0; i < file_name_vec.size(); i++) {
 
@@ -128,9 +144,13 @@ int main(int argc, char *argv[]) {
                 }
             }
 
-            if (isZBoson(Z_daughters, ZBoson)) {
-                mPhiHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
-                mXjZHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
+            if (isGoodZBoson(Z_daughters, ZBoson, 40.0)) {
+                if (ZBoson.pt() > 60.0) {
+                    mPhiHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
+                    mXjZHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
+                }
+                mMeanXjzHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
+                mRjZHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
                 vector<PseudoJet> jets = SelectJet(pseduo_jets, jet_def, select_akt);
                 if (jets.size() > 0) {
                     for (const auto &jet : jets) {
@@ -146,7 +166,7 @@ int main(int argc, char *argv[]) {
                         double deltaR0J = sqrt(deltaPhi0J * deltaPhi0J + deltaRap0J * deltaRap0J);
                         double deltaR1J = sqrt(deltaPhi1J * deltaPhi1J + deltaRap1J * deltaRap1J);
                         if (deltaR0J >=0.4 && deltaR1J >= 0.4) {
-                            if (jet.pt() >= 30.0) {
+                            if (jet.pt() >= 30.0 && ZBoson.pt() > 60.0) {
                                 mPhiHisto.addEventNum(delta_phi, 
                                     (evt->weights())[0] / (evt->weights())[2]);
                             }
@@ -155,8 +175,16 @@ int main(int argc, char *argv[]) {
                                     mRNG, jet.pt(), StandardDeviation(jet.pt(), mCSN)
                                 ) : jet.pt();
                                 if (jet_pt > 30.0) {
-                                    mXjZHisto.addEventNum(jet_pt / ZBoson.pt(), 
-                                        (evt->weights())[0] / (evt->weights())[2]);
+                                    if (ZBoson.pt() > 60.0) {
+                                        mXjZHisto.addEventNum(jet_pt / ZBoson.pt(), 
+                                            (evt->weights())[0] / (evt->weights())[2]);
+                                    }
+                                    double x_jZ_Weighted_Sum = (
+                                        jet_pt / ZBoson.pt()
+                                    ) * ((evt->weights())[0] / (evt->weights())[2]);
+                                    mMeanXjzHisto.addEventNum(ZBoson.pt(), x_jZ_Weighted_Sum);
+                                    mRjZHisto.addEventNum(ZBoson.pt(), 
+                                        ((evt->weights())[0] / (evt->weights())[2]));
                                 }
                             }
                         }
@@ -170,7 +198,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    vector<distInfo> mPhiHistoInfo = mPhiHisto.getHisto();
+    vector<distInfo> mPhiHistoInfo = mPhiHisto.getDHisto();
     ofstream mDeltaPhiFile;
     mDeltaPhiFile.open(args.get<string>("delta-phi"));
     if (isSmeared) {
@@ -186,8 +214,9 @@ int main(int argc, char *argv[]) {
             << mPhiHistoInfo[i].region.middleValue << '\t'
             << mPhiHistoInfo[i].distValue << '\n';
     }
+    mDeltaPhiFile.close();
 
-    vector<distInfo> mXjZHistoInfo = mXjZHisto.getHisto();
+    vector<distInfo> mXjZHistoInfo = mXjZHisto.getDHisto();
     ofstream mXjZFile;
     mXjZFile.open(args.get<string>("x-jz"));
     if (isSmeared) {
@@ -203,5 +232,42 @@ int main(int argc, char *argv[]) {
             << mXjZHistoInfo[i].region.middleValue << '\t'
             << mXjZHistoInfo[i].distValue << '\n';
     }
+    mXjZFile.close();
+
+    vector<distInfo> mMeanXjzHistoInfo = mMeanXjzHisto.getHisto();
+    ofstream mMeanXjZFile;
+    mMeanXjZFile.open(args.get<string>("mean-x-jz"));
+    if (isSmeared) {
+        mMeanXjZFile << "# # Smeared: True, and\n"
+            << "# C: " << mCSN.C << ", S: " << mCSN.S << ", N: "
+            << mCSN.N << '\n';
+    }
+    mMeanXjZFile << "# xlow\txhigh\txmiddle\tval" << '\n';
+    for (size_t i = 0; i < mMeanXjzHistoInfo.size(); i++) {
+        mMeanXjZFile << setw(12) << scientific << setprecision(6)
+            << mMeanXjzHistoInfo[i].region.leftValue << '\t' 
+            << mMeanXjzHistoInfo[i].region.rightValue << '\t'
+            << mMeanXjzHistoInfo[i].region.middleValue << '\t'
+            << mMeanXjzHistoInfo[i].distValue << '\n';
+    }
+    mMeanXjZFile.close();
+
+    vector<distInfo> mRjZHistoInfo = mRjZHisto.getHisto();
+    ofstream mRjZFile;
+    mRjZFile.open(args.get<string>("R_jZ"));
+    if (isSmeared) {
+        mRjZFile << "# # Smeared: True, and\n"
+            << "# C: " << mCSN.C << ", S: " << mCSN.S << ", N: "
+            << mCSN.N << '\n';
+    }
+    mRjZFile << "# xlow\txhigh\txmiddle\tval" << '\n';
+    for (size_t i = 0; i < mRjZHistoInfo.size(); i++) {
+        mRjZFile << setw(12) << scientific << setprecision(6)
+            << mRjZHistoInfo[i].region.leftValue << '\t' 
+            << mRjZHistoInfo[i].region.rightValue << '\t'
+            << mRjZHistoInfo[i].region.middleValue << '\t'
+            << mRjZHistoInfo[i].distValue << '\n';
+    }
+    mRjZFile.close();
     
 }
