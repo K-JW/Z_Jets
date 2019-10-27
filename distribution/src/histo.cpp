@@ -8,7 +8,7 @@
  * Date: 2019-10-16 09:46:45
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-26 21:07:23
+ * LastEditTime: 2019-10-27 10:36:21
  * Description: Define histo class
  */
 
@@ -90,6 +90,17 @@ void Histo::addEventNum(const double &value, const double &weight) {
         
 //     }
 // }
+
+// 返回直方图的值
+vector<double> Histo::getBinValues() const {
+    vector<double> tmp;
+    int bin_size = mDistInfoVec.size();
+    tmp.resize(bin_size);
+    for (size_t i = 0; i < bin_size; i++) {
+        tmp[i] = mDistInfoVec[i].distValue;
+    }
+    return tmp;
+}
 
 // 返回值列表
 vector<distInfo> Histo::getHisto() {

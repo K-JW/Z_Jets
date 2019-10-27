@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:50:05
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-26 17:17:01
+ * LastEditTime: 2019-10-27 10:33:51
  * Description: Class histogram
  */
 
@@ -62,6 +62,9 @@ namespace iHepTools {
             inline double getEventNorm() const {
                 return mNormalisationValue;
             }
+            
+            // 返回直方图的值
+            vector<double> getBinValues() const;
             
             // 返回值列表
             vector<distInfo> getHisto();
