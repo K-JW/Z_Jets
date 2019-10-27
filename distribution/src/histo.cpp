@@ -8,7 +8,7 @@
  * Date: 2019-10-16 09:46:45
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-27 10:36:21
+ * LastEditTime: 2019-10-27 10:55:59
  * Description: Define histo class
  */
 
