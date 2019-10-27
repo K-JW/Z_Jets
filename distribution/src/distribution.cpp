@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-27 13:02:12
+ * LastEditTime: 2019-10-27 13:15:52
  * Description: Calculate distribution.
  */
 
@@ -154,7 +154,7 @@ int main(int argc, char *argv[]) {
                     mPhiHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
                     mXjZHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
                 }
-                // mRjZDenoHisto.addEventNum(ZBoson.pt(), (evt->weights())[0] / (evt->weights())[2] );
+                mRjZDenoHisto.addEventNum(ZBoson.pt(), (evt->weights())[0] / (evt->weights())[2] );
                 vector<PseudoJet> jets = SelectJet(pseduo_jets, jet_def, select_akt);
                 if (jets.size() > 0) {
                     for (const auto &jet : jets) {
@@ -186,7 +186,6 @@ int main(int argc, char *argv[]) {
                                     double x_jZ_Weighted_Sum = (
                                         jet_pt / ZBoson.pt()
                                     ) * ((evt->weights())[0] / (evt->weights())[2]);
-                                    mRjZDenoHisto.addEventNum(ZBoson.pt(), (evt->weights())[0] / (evt->weights())[2] );
                                     mMeanXjzDenoHisto.addEventNum(ZBoson.pt(), (evt->weights())[0] / (evt->weights())[2] );
                                     mMeanXjzHisto.addEventNum(ZBoson.pt(), x_jZ_Weighted_Sum);
                                     mRjZHisto.addEventNum(ZBoson.pt(), 
