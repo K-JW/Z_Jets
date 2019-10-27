@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-27 11:55:30
+ * LastEditTime: 2019-10-27 12:22:20
  * Description: Calculate distribution.
  */
 
@@ -154,11 +154,6 @@ int main(int argc, char *argv[]) {
                     mPhiHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
                     mXjZHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
                 }
-                //
-                mMeanXjzHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
-                mRjZHisto.addEventNorm( (evt->weights())[0] / (evt->weights())[2] );
-                //
-                mMeanXjzDenoHisto.addEventNum(ZBoson.pt(), (evt->weights())[0] / (evt->weights())[2] );
                 mRjZDenoHisto.addEventNum(ZBoson.pt(), (evt->weights())[0] / (evt->weights())[2] );
                 vector<PseudoJet> jets = SelectJet(pseduo_jets, jet_def, select_akt);
                 if (jets.size() > 0) {
@@ -191,6 +186,7 @@ int main(int argc, char *argv[]) {
                                     double x_jZ_Weighted_Sum = (
                                         jet_pt / ZBoson.pt()
                                     ) * ((evt->weights())[0] / (evt->weights())[2]);
+                                    mMeanXjzDenoHisto.addEventNum(ZBoson.pt(), (evt->weights())[0] / (evt->weights())[2] );
                                     mMeanXjzHisto.addEventNum(ZBoson.pt(), x_jZ_Weighted_Sum);
                                     mRjZHisto.addEventNum(ZBoson.pt(), 
                                         ((evt->weights())[0] / (evt->weights())[2]));
@@ -223,16 +219,16 @@ int main(int argc, char *argv[]) {
     // 输出 <x_jZ> 
     vector<distInfo> mMeanXjzHistoInfo = mMeanXjzHisto.getHisto();
     vector<double> meanXjZDenoVec = mMeanXjzDenoHisto.getBinValues();
-    // for (size_t i = 0; i < mMeanXjzHistoInfo.size(); i++) {
-    //     mMeanXjzHistoInfo[i].distValue /= meanXjZDenoVec[i];
-    // }
+    for (size_t i = 0; i < mMeanXjzHistoInfo.size(); i++) {
+        mMeanXjzHistoInfo[i].distValue /= meanXjZDenoVec[i];
+    }
     WriteDataToText(args.get<string>("mean-x-jz"), mMeanXjzHistoInfo, comments);
     // 输出 R_jZ
     vector<distInfo> mRjZHistoInfo = mRjZHisto.getHisto();
-    // vector<double> RjZDenoVec = mRjZDenoHisto.getBinValues();
-    // for (size_t i = 0; i < mRjZHistoInfo.size(); i++) {
-    //     mRjZHistoInfo[i].distValue /= RjZDenoVec[i];
-    // }
+    vector<double> RjZDenoVec = mRjZDenoHisto.getBinValues();
+    for (size_t i = 0; i < mRjZHistoInfo.size(); i++) {
+        mRjZHistoInfo[i].distValue /= RjZDenoVec[i];
+    }
     WriteDataToText(args.get<string>("R_jZ"), mRjZHistoInfo, comments);
     
     
