@@ -8,7 +8,7 @@
  * Date: 2019-10-15 21:00:36
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-27 13:15:52
+ * LastEditTime: 2019-10-29 12:56:51
  * Description: Calculate distribution.
  */
 
@@ -170,14 +170,14 @@ int main(int argc, char *argv[]) {
                         double deltaR0J = sqrt(deltaPhi0J * deltaPhi0J + deltaRap0J * deltaRap0J);
                         double deltaR1J = sqrt(deltaPhi1J * deltaPhi1J + deltaRap1J * deltaRap1J);
                         if (deltaR0J >=0.4 && deltaR1J >= 0.4) {
-                            if (jet.pt() >= 30.0 && ZBoson.pt() > 60.0) {
+                            double jet_pt = isSmeared ? GaussSmeared(
+                                    mRNG, jet.pt(), StandardDeviation(jet.pt(), mCSN)
+                                ) : jet.pt();
+                            if (jet_pt > 30.0 && ZBoson.pt() > 60.0) {
                                 mPhiHisto.addEventNum(delta_phi, 
                                     (evt->weights())[0] / (evt->weights())[2]);
                             }
                             if ( delta_phi > (7 * PI / 8.0) ) {
-                                double jet_pt = isSmeared ? GaussSmeared(
-                                    mRNG, jet.pt(), StandardDeviation(jet.pt(), mCSN)
-                                ) : jet.pt();
                                 if (jet_pt > 30.0) {
                                     if (ZBoson.pt() > 60.0) {
                                         mXjZHisto.addEventNum(jet_pt / ZBoson.pt(), 
