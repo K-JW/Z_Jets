@@ -1,0 +1,89 @@
+# BEGIN PLOT
+LegendOnly=/hepdata.77604.v1/t6/syserr Sherpa
+XLabel=$p_T^Z ({\rm GeV/c})$
+RatioPlotReference=/hepdata.77604.v1/t6/syserr
+YLabel=$\big<x_{jZ}\big>$
+XLabelSep=4.5
+YLabelSep=5
+DrawOnly=/hepdata.77604.v1/t6/syserr Sherpa /hepdata.77604.v1/t6/staterr comments
+RatioPlot=1
+#Title= CMS, 5.02 TeV \quad\quad\quad\quad\quad PbPb 404 $\mu\rm b^{-1}$, pp 27.4 $\rm pb^{-1}$
+Legend=1
+LegendXPos=0.5
+# LogY=1
+# YMin=1.0E-3
+# YMax=5
+# END PLOT
+
+# BEGIN HISTO1D /hepdata.77604.v1/t6/syserr
+ConnectBins=0
+ErrorBars=0
+ErrorBands=1
+IsRef=1
+Path=/hepdata.77604.v1/t6/syserr
+PolyMarker=*
+DotSize=0.12
+LineWidth=0
+LineStyle=none
+LineOpacity=1
+Title=CMS Pb+Pb $0$-$30\%$
+# xlow	 xhigh	 val	 syserrminus	 syserrplus
+4.000000e+01	5.000000e+01	9.500000e-01	5.000000e-02	5.000000e-02
+5.000000e+01	6.000000e+01	8.200000e-01	4.000000e-02	4.000000e-02
+6.000000e+01	8.000000e+01	7.600000e-01	5.000000e-02	5.000000e-02
+8.000000e+01	1.200000e+02	6.700000e-01	4.000000e-02	4.000000e-02
+# END HISTO1D
+
+# BEGIN HISTO1D /hepdata.77604.v1/t6/staterr
+ConnectBins=0
+ErrorBars=1
+ErrorBands=0
+IsRef=1
+Path=/hepdata.77604.v1/t6/staterr
+PolyMarker=*
+DotSize=0.12
+#LineWidth=0
+#LineStyle=none
+LineOpacity=1
+#Title=CMS Smeared $p+p$
+# xlow	 xhigh	 val	 staterrminus	staterrplus
+4.000000e+01	5.000000e+01	9.500000e-01	5.000000e-02	5.000000e-02
+5.000000e+01	6.000000e+01	8.200000e-01	6.000000e-02	6.000000e-02
+6.000000e+01	8.000000e+01	7.600000e-01	5.000000e-02	5.000000e-02
+8.000000e+01	1.200000e+02	6.700000e-01	4.000000e-02	4.000000e-02
+# END HISTO1D
+
+# BEGIN HISTO1D Sherpa
+ErrorBars=0
+LineColor=red
+LineStyle=solid
+Path=Sherpa
+Title=Pb+Pb $Z^0+{\rm jets}$
+XLabel=~
+YLabel=~
+# xlow	xhigh	val	error
+4.000000e+01	5.000000e+01	9.904609e-01	0.000000e-02	0.000000e-02
+5.000000e+01	6.000000e+01	8.799338e-01	0.000000e-02	0.000000e-02
+6.000000e+01	8.000000e+01	7.931963e-01	0.000000e-02	0.000000e-02
+8.000000e+01	1.200000e+02	7.010527e-01	0.000000e-02	0.000000e-02
+# END HISTO1D
+
+# BEGIN SPECIAL comments
+\psclip{\psframe[linewidth=0, linestyle=none](0,0)(1,1)}
+\uput{4pt}[0]{0}(0.038, 0.88){$\sqrt{s}=5.02$~TeV~$Z^0+$jet}
+\uput{4pt}[0]{0}(0.038, 0.78){$p_T^Z>60$~GeV/c}
+\uput{4pt}[0]{0}(0.038, 0.68){anki-$k_T$ jet $R=0.3$}
+\uput{4pt}[0]{0}(0.038, 0.58){$p_T^{\rm jet}>30$~GeV/c}
+\uput{4pt}[0]{0}(0.038, 0.48){$\lvert\eta^{\rm jet}\rvert<1.6$}
+\endpsclip
+# END SPECIAL
+
+# # BEGIN POINT sp1
+# Title=MC Points
+# # xlow	 xhigh
+# 2.000000e+01	4.000000e+01
+# 4.000000e+01	6.000000e+01
+# 6.000000e+01	8.000000e+01
+# 8.000000e+01	1.000000e+02
+# 1.000000e+02	1.500000e+02
+# # END POINT
