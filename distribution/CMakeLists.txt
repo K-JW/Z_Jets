@@ -37,3 +37,6 @@ add_compile_options("-O3")
 
 add_executable(dist src/distribution.cpp src/histo.cpp)
 target_link_libraries(dist HepMC m fastjet)
+
+add_executable(dist-no-hepmc src/dist-no-hepmc.cpp src/histo.cpp)
+target_link_libraries(dist-no-hepmc m fastjet)
