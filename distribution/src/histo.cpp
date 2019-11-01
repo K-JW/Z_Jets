@@ -8,7 +8,7 @@
  * Date: 2019-10-16 09:46:45
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-27 10:55:59
+ * LastEditTime: 2019-11-01 10:27:33
  * Description: Define histo class
  */
 
@@ -74,7 +74,9 @@ int Histo::findAtRegion(double value) {
     if (fabs(value - mDistInfoVec.back().region.rightValue) <= 1.0E-06) {
         return mDistInfoVec.size() - 1;
     } else {
+        #ifdef DEBUG
         std::cout << value << " don't belong to any region." << std::endl;
+        #endif
         return -1;
     }
 }
