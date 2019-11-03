@@ -8,7 +8,7 @@
  * Date: 2019-10-16 14:42:56
  * 
  * LastEditors: KANG Jin-Wen
- * LastEditTime: 2019-10-26 19:42:28
+ * LastEditTime: 2019-11-03 11:02:21
  * Description: file content
  */
 
@@ -82,7 +82,7 @@ namespace iHepTools {
         }
     }
 
-    bool isGoodZBoson(const vector<PseudoJet> &mZ_daughters, PseudoJet &ZBoson, double &ZBosonPtMin, double &ZBosonPtMax) {
+    bool isGoodZBoson(const vector<PseudoJet> &mZ_daughters, PseudoJet &ZBoson, const double &ZBosonPtMin, const double &ZBosonPtMax) {
         PseudoJet tmpZBoson;
         bool tmpBool = isGoodZBoson(mZ_daughters, tmpZBoson, ZBosonPtMin);
         if (tmpBool && tmpZBoson.pt() < ZBosonPtMax) {
