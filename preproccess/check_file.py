@@ -11,7 +11,7 @@ E-Mail: kangjinwen@vip.qq.com
 Date: 2019-10-17 14:28:11
 
 LastEditors: KANG Jin-Wen
-LastEditTime: 2019-11-03 15:12:45
+LastEditTime: 2019-11-03 15:15:51
 Description: This python script is used to detect if the hepmc file is complete.
 '''
 import sys, os
@@ -24,9 +24,6 @@ def isComplete(file_name):
     file = open(file_name, 'r')
     end1 = ( file.readlines()[-1].strip() == "HepMC::IO_GenEvent-END_EVENT_LISTING" ) 
     file.close()
-    print(head1)
-    print(head2)
-    print(end1)
     return ( head1 and head2 and end1 )
 
 # 倒序读行，行数为负数，-1 为倒数第一行
